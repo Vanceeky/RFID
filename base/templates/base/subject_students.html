@@ -1,0 +1,200 @@
+{% extends 'layouts/base.html' %} 
+
+{% block stylesheets %}
+<style>
+    #myTable_paginate{
+        padding-bottom: 10px;
+    }
+
+
+    #myTable_paginate span a{
+      border-radius: 50px;
+    }
+
+
+</style>
+
+{% endblock stylesheets %}
+
+{% block content %}
+
+<div class="header bg-primary pb-6">
+  <div class="container-fluid">
+    <div class="header-body">
+      <div class="row align-items-center py-4">
+        <div class="col-lg-6 col-7">
+          <h6 class="h2 text-white d-inline-block mb-0">Default</h6>
+          <nav
+            aria-label="breadcrumb"
+            class="d-none d-md-inline-block ml-md-4 text-capitalize"
+          >
+            <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
+              <li class="breadcrumb-item">
+                <a href="#"><i class="fas fa-home"></i></a>
+              </li>
+              <li class="breadcrumb-item">
+                <a href="{% url 'subjects' %}">Subject</a>
+              </li>
+              <li class="breadcrumb-item">
+                <a href="">{{ subject.name }}</a>
+              </li>
+              <li class="breadcrumb-item active" aria-current="page">
+                Students
+              </li>
+            </ol>
+          </nav>
+        </div>
+        <div class="col-lg-6 col-5 text-right">
+            <a href="{% url 'subject_attendance' subject.name|slugify %}" class="btn btn-md btn-neutral">View attendance</a>
+        </div>
+      </div>
+      <!-- Card stats -->
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid mt--6">
+  <div class="row">
+    <div class="col-xl-9">
+      <div class="card">
+        <div class="card-header border-0">
+          <div class="row align-items-center">
+            <div class="col">
+              <h3 class="mb-0">Student Information</h3>
+            </div>
+            <div class="col text-right">
+                <a href="#!" class="btn btn-sm btn-primary">{{ students.count }} students enrolled </a>
+            </div> 
+          </div>
+        </div>
+        <div class="table-responsive">
+          <!-- Projects table -->
+          <table class="table align-items-center table-flush" id="myTable">
+            <thead class="thead-light">
+              <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Student ID</th>
+                <th scope="col">Contact</th>
+                <th scope="col">Address</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for student in students %}
+              
+              <tr>
+                <td>
+                  <div class="media align-items-center">
+                    <a href="#" class="avatar rounded-circle mr-3">
+                      <img
+                        alt="Image placeholder"
+                        src=""
+                      />
+                    </a>
+                    <div class="media-body">
+                      <a href="{% url 'student_profile' student.student_id|slugify %}">
+                      <span class="name mb-0 text-sm"
+                        >{{ student.last_name }}, {{ student.first_name }} {{ student.student_id}}</span
+                      ></a>
+                    </div>
+                  </div>
+                </td>
+                <td>{{ student.student_id }}</td>
+                <td>
+                  {{ student.email }}
+                  <br />
+                  <span>{{ student.contact_number}}</span>
+                </td>
+                <td>{{ student.address }}</td>
+                <td class="text-right">
+                  <div class="dropdown">
+                    <a
+                      class="btn btn-sm btn-icon-only text-light"
+                      href="#"
+                      role="button"
+                      data-toggle="dropdown"
+                      aria-haspopup="true"
+                      aria-expanded="false"
+                    >
+                      <i class="fas fa-ellipsis-v"></i>
+                    </a>
+                    <div
+                      class="dropdown-menu dropdown-menu-right dropdown-menu-arrow"
+                    >
+                      <a class="dropdown-item" href="#">Action</a>
+                      <a class="dropdown-item" href="#">Another action</a>
+                      <a class="dropdown-item" href="#">Something else here</a>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+
+
+
+              {% endfor %}
+            </tbody>
+          </table>
+
+          
+
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-3">
+      <div class="card">
+        <div class="card-header border-0">
+          <div class="row align-items-center">
+            <div class="col">
+              <h3 class="mb-0">Student attended</h3>
+            </div>
+            <div class="col text-right">
+              <a href="#!" class="btn btn-sm btn-primary">September 12, 2023</a>
+            </div>
+          </div>
+        </div>
+        <div class="table-responsive">
+          <!-- Projects table -->
+          <table class="table align-items-center table-flush">
+            <thead class="thead-light">
+              <tr>
+                <th scope="col">Students</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>25 students</td>
+                <td>
+                  <div class="d-flex align-items-center">
+                    <span class="mr-2">60%</span>
+                    <div>
+                      <div class="progress">
+                        <div
+                          class="progress-bar bg-gradient-danger"
+                          role="progressbar"
+                          aria-valuenow="60"
+                          aria-valuemin="0"
+                          aria-valuemax="100"
+                          style="width: 60%"
+                        ></div>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %} {% block javascripts %}
+<script>
+
+let table = new DataTable('#myTable');
+
+
+</script>
+{% endblock %}

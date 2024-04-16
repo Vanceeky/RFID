@@ -1,0 +1,183 @@
+{% extends 'layouts/layout.html' %}
+
+{% block content %}
+
+  <div class="container-fluid py-4">
+
+        <div class="header-body">
+
+            <div class="align-items-center py-4 d-flex justify-content-between">
+              <nav
+                aria-label="breadcrumb"
+                class=" d-md-inline-block ml-md-4 text-capitalize"
+              >
+                <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
+                  <li class="breadcrumb-item">
+                    <a href="#"><i class="fas fa-home"></i></a>
+                  </li>
+                  <li class="breadcrumb-item">
+                    <a href="{% url 'subjects' %}">Attendance</a>
+                  </li>
+
+                </ol>
+              </nav>
+
+              <div>
+
+                <button class="btn btn-md bg-gradient-info" data-bs-toggle="modal" data-bs-target="#modal-add-student"><i class="fas fa-plus"></i> Add Student</button>
+
+                <a href="" class="btn btn-md bg-gradient-success">View attendance</a>
+              </div>
+
+            </div>
+          <!-- Card stats -->
+        </div>
+
+
+        <div class="row">
+
+          <div class="col-md-8">
+            <div class="card mb-4">
+              <div class="card-header pb-0">
+                  <h6>Attendance</h6>
+              </div>
+              <div class="card-body px-0 pt-0 pb-2">
+                  <div class="table-responsive p-0">
+                      <table class="table align-items-center mb-0">
+                          <thead>
+                              <tr>
+                                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Student</th>
+                                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Subject</th>
+                                  <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Date</th>
+                                  <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Time In</th>
+                                  <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Time Out</th>
+                                  <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
+                                  <th class="text-secondary opacity-7"></th>
+                              </tr>
+                          </thead>
+
+                          <tbody id="AttendanceListContainer">
+  
+                           
+                            {% include 'base/updated_attendance_list.html' %}
+                            
+
+                          </tbody>
+
+                      </table>
+                  </div>
+              </div>
+            </div>
+          </div>
+  
+          <div class="col-md-4">
+
+              <div class="card mb-4">
+                      <div class="card ">
+                            <div class="card-header pb-0 p-3">
+                              <div class="row items-center">
+                                  <div class="col">
+                                      <h6 class="mb-0"><a href="asd" type="button"  data-bs-toggle="tooltip" data-bs-placement="top" title="View all" data-container="body" data-animation="true">Today's Attendance</a></h6>
+                                  </div>
+                                  <div class="col-md-6 d-flex justify-content-end align-items-center">
+                                    <i class="far fa-calendar-alt me-2" aria-hidden="true"></i>
+                                    <small>{{ now }}</small>
+                                  </div>
+                              </div>
+          
+                              <div class="filter-attendance">
+                                    <div class="input-group">
+                                      <span class="input-group-text text-body"><i class="fas fa-search" aria-hidden="true"></i></span>
+                                      <input type="text" class="form-control" placeholder="Type here..." onfocus="focused(this)" onfocusout="defocused(this)">
+                                    </div>
+                              </div>
+                            </div>
+                              <div class="table-responsive">
+                                <table class="table align-items-center mb-0">
+                                  <thead>
+                                    <tr>
+                                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Subject</th>
+                                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Students</th>
+                                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Percentage</th>
+                                      <th class="text-secondary opacity-7"></th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {% if overall_attendance_percentage %}
+                                    <p>Overall Attendance Percentage: {{ overall_attendance_percentage|floatformat:2 }}%</p>
+                                {% endif %}
+
+                                    {% for data in subject_attendance %}
+                                    <tr>
+                                      <td>
+                                          <div class="px-2 py-1">
+                                            <h6 class="mb-0 text-md text-capitalize">{{ data.subject_schedule.classification }} | {{ data.subject_schedule.subject }}</h6>
+                                          </div>
+                                      </td>
+                                      <td>
+                                        <p class="text-md font-weight-bold mb-0">{{ data.attended_students_today }}</p>
+                                      </td>
+                                      <td class="align-middle text-center text-sm">
+                                          <div class="d-flex align-items-center">
+                                              <span class="font-weight-bold mx-2">{{data.attendance_percentage_today|floatformat:0}}%</span>
+                                              <div>
+                                                <div class="progress">
+                                                  <div class="progress-bar bg-gradient-danger" role="progressbar" aria-valuenow="{{ data.attendance_percentage_today }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ data.attendance_percentage_today }}%;"></div>
+                                              </div>
+                                  
+                                              </div>
+                                          </div>
+                                      </td>
+                                      <td class="align-middle">
+                                        <a href="javascript:;" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
+                                          View
+                                        </a>
+                                      </td>
+                                    </tr>
+                                    {% endfor %}
+                            
+                                  </tbody>
+                                </table>
+                              </div>
+                            
+                      </div>
+  
+              </div>
+          </div>
+  
+        </div>
+
+
+  </div>
+
+
+{% endblock %}
+
+{% block javascripts %}
+<!-- display.html -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        // Listen for the custom event 'attendanceProcessed'
+
+            // Call the updateAttendanceList function
+            updateAttendanceList();
+       
+
+        function updateAttendanceList() {
+            console.log("Updating attendance list...");
+            $.get('{% url "render_attendance_list" %}', function(updatedList) {
+                console.log("Received updated attendance list:", updatedList);
+                $('#AttendanceListContainer').html(updatedList);
+            });
+        }
+    });
+</script>
+
+
+
+
+
+
+{% endblock %}

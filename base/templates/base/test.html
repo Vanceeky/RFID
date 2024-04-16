@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Custom Date Filter</title>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
+    <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+</head>
+<body>
+    <table id="customDataTable">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Value</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Your table data goes here -->
+        </tbody>
+    </table>
+    <br>
+    <label for="startDate">Start Date:</label>
+    <input type="date" id="startDate">
+    <label for="endDate">End Date:</label>
+    <input type="date" id="endDate">
+    <button id="filterButton">Filter</button>
+
+    <script>
+        $(document).ready(function () {
+            var table = $('#customDataTable').DataTable();
+
+            $('#filterButton').on('click', function () {
+                var startDate = $('#startDate').val();
+                var endDate = $('#endDate').val();
+
+                table.column(0).search(startDate + ' - ' + endDate).draw();
+            });
+        });
+    </script>
+</body>
+</html>

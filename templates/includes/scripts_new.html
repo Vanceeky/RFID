@@ -1,0 +1,185 @@
+  <!--   Core JS Files   -->
+  <script src="/static/assets/js/core/popper.min.js"></script>
+  <script src="/static/assets/js/core/bootstrap.min.js"></script>
+  <script src="/static/assets/js/plugins/perfect-scrollbar.min.js"></script>
+  <script src="/static/assets/js/plugins/smooth-scrollbar.min.js"></script>
+  <script src="/static/assets/js/plugins/chartjs.min.js"></script>
+  <script src="/static/assets/js/plugins/jquery.min.js"></script>
+  <script src="/static/assets/js/plugins/sweetAlert.min.js"></script>
+
+  <script type="text/javascript">
+
+    // Line chart with gradient
+    var ctx2 = document.getElementById("line-chart-gradient").getContext("2d");
+
+    var gradientStroke1 = ctx2.createLinearGradient(0, 230, 0, 50);
+
+    gradientStroke1.addColorStop(1, 'rgba(94,114,228,0.2)');
+    gradientStroke1.addColorStop(0.2, 'rgba(72,72,176,0.0)');
+    gradientStroke1.addColorStop(0, 'rgba(94,114,228,0)'); //purple colors
+
+    var gradientStroke2 = ctx2.createLinearGradient(0, 230, 0, 50);
+
+    gradientStroke2.addColorStop(1, 'rgba(20,23,39,0.2)');
+    gradientStroke2.addColorStop(0.2, 'rgba(72,72,176,0.0)');
+    gradientStroke2.addColorStop(0, 'rgba(20,23,39,0)'); //purple colors
+
+    new Chart(ctx2, {
+      type: "line",
+      data: {
+        labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+        datasets: [{
+            label: "Present",
+            tension: 0.4,
+            borderWidth: 0,
+            pointRadius: 0,
+            borderColor: "#5e72e4",
+            borderWidth: 3,
+            backgroundColor: gradientStroke1,
+            fill: true,
+            data: {{ present_data|default:"[]" }},
+            maxBarThickness: 6
+
+          },
+          {
+            label: "Late",
+            tension: 0.4,
+            borderWidth: 0,
+            pointRadius: 0,
+            borderColor: "#3A416F",
+            borderWidth: 3,
+            backgroundColor: gradientStroke2,
+            fill: true,
+            data: {{ late_data|default:"[]" }},
+            maxBarThickness: 6
+          },
+          {
+            label: "Absent",
+            tension: 0.4,
+            borderWidth: 0,
+            pointRadius: 0,
+            borderColor: "#f5365c",
+            borderWidth: 3,
+            backgroundColor: gradientStroke2,
+            fill: true,
+            data: {{ absent_data|default:"[]" }},
+            maxBarThickness: 6
+          },
+          {
+            label: "Excused",
+            tension: 0.4,
+            borderWidth: 0,
+            pointRadius: 0,
+            borderColor: "#fb6340",
+            borderWidth: 3,
+            backgroundColor: gradientStroke2,
+            fill: true,
+            data: {{ excused_data|default:"[]" }},
+            maxBarThickness: 6
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: true,
+          }
+        },
+        interaction: {
+          intersect: false,
+          mode: 'index',
+        },
+        scales: {
+          y: {
+            grid: {
+              drawBorder: false,
+              display: true,
+              drawOnChartArea: true,
+              drawTicks: false,
+              borderDash: [5, 5]
+            },
+            ticks: {
+              display: true,
+              padding: 10,
+              color: 'blue',
+              font: {
+                size: 11,
+                family: "Open Sans",
+                style: 'normal',
+                lineHeight: 2
+              },
+            }
+          },
+          x: {
+            grid: {
+              drawBorder: false,
+              display: true,
+              drawOnChartArea: true,
+              drawTicks: false,
+              borderDash: [5, 5]
+            },
+            ticks: {
+              display: true,
+              color: '#b2b9bf',
+              padding: 10,
+              font: {
+                size: 11,
+                family: "Open Sans",
+                style: 'normal',
+                lineHeight: 2
+              },
+            }
+          },
+        },
+      },
+    });
+
+  </script>
+
+
+  <script type="text/javascript">
+    var ctx4 = document.getElementById("pie-chart").getContext("2d");
+  
+    new Chart(ctx4, {
+      type: "pie",
+      data: {
+        labels: {{ labels|safe }},
+        datasets: [{
+          label: "Students",
+          weight: 9,
+          cutout: 0,
+          tension: 0.9,
+          pointRadius: 2,
+          borderWidth: 2,
+          backgroundColor: ['#17c1e8', '#5e72e4', '#2dce89', '#f5365c'],
+          data: {{ data|safe }},
+          fill: false
+        }],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: true,
+          }
+        },
+      },
+    });
+  </script>
+  
+  <script>
+    var win = navigator.platform.indexOf('Win') > -1;
+    if (win && document.querySelector('#sidenav-scrollbar')) {
+      var options = {
+        damping: '0.5'
+      }
+      Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
+    }
+  </script>
+  <!-- Github buttons -->
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+  <!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->
+  <script src="/static/assets/js/argon-dashboard.min.js?v=2.0.4"></script>

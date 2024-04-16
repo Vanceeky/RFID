@@ -1,0 +1,596 @@
+{% extends 'layouts/layout.html' %}
+
+{% block content %}
+
+<div class="card shadow-lg mx-4 card-profile-bottom">
+  
+  <div class="card-body p-3">
+    <div class="d-flex justify-content-between gx-4">
+        <div class="">
+          <div class="h-100">
+              <h5 class="mb-1 text-uppercase">
+              Subject list
+              </h5>
+              <p class="mb-0 font-weight-bold text-sm">
+              See all the subject of each year level and semester
+              </p>
+          </div>
+        </div>
+
+        <div class="">
+          <button class="btn btn-md bg-gradient-info" data-bs-toggle="modal" data-bs-target="#modal-add"><i class="fas fa-plus"></i> Add Subject</button>
+
+        </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="container-fluid py-4">
+
+
+  <div class="row">
+      <div class="col-md-8">
+        <div class="p-2">
+          <div class="row">
+
+
+                <div class="col-lg-12 col-md-4 mt-3 mb-1">
+                  <form method="GET">
+                    <div class="row">
+                        <div class="col-lg-5 mt-1">
+                         
+                            <div class="input-group">
+                                <span class="input-group-text text-body"><i class="fas fa-search" aria-hidden="true"></i></span>
+                                <input type="search" class="form-control" value="{{ search_query }}" placeholder="Search subjects or adviser..." name="search">
+                            </div>
+                          
+                        </div>
+
+                        <div class="col-lg-5 mt-1">
+                          <div class="row">
+                            <div class="col-lg-6 col-md-3">
+                              <div class="form-group">
+                                <select class="form-control" id="yearLevelSelect" id="semesterSelect" name="year_level">
+                                  <option value="" selected>Select Year Level</option>
+                                  <option value="1st" {% if selected_year_level == '1st' %}selected{% endif %}>1st Year</option>
+                                  <option value="2nd" {% if selected_year_level == '2nd' %}selected{% endif %}>2nd Year</option>
+                                  <option value="3rd" {% if selected_year_level == '3rd' %}selected{% endif %}>3rd Year</option>
+                                  <option value="4th" {% if selected_year_level == '4th' %}selected{% endif %}>4th Year</option>
+                                </select>
+                            </div>
+                            </div>
+
+                            <div class="col-lg-6 col-md-3">
+                              <div class="form-group">
+                                <select class="form-control" id="semesterSelect" id="semesterSelect" name="semester" >
+                                  <option value="" selected>Select Semester</option>
+                                  <option value="1st" {% if selected_semester == '1st' %}selected{% endif %}>1st Semester</option>
+                                  <option value="2nd" {% if selected_semester == '2nd' %}selected{% endif %}>2nd Semester</option>
+                                </select>
+                            </div>
+                            </div>
+                          </div>
+
+
+
+                        </div>
+
+                        <div class="col-lg-2 mt-1">
+
+                          <button type="submit" class="btn btn-outline-info">Search</button>
+                        </div>
+
+                    </div>
+
+                  </form>
+              
+           
+
+                </div>
+
+
+              <div class="col">
+                <div class="card">
+                    <div class="card-body pt-4 pb-2">
+                      <div class="row subject-list-container" id="subjectListContainer">
+
+                        {% include 'base/updated_subject_list.html' %}
+
+
+
+                      </div>
+
+                          <!-- Your existing pagination structure -->
+                        <nav aria-label="Page navigation example">
+                          <ul class="pagination justify-content-end">
+                              {% if paginated_subjects.has_previous %}
+                                  <li class="page-item">
+                                      <a class="page-link" href="?page=1" tabindex="-1">
+                                          <i class="fa fa-angle-left"></i>
+                                          <span class="sr-only">Previous</span>
+                                      </a>
+                                  </li>
+                              {% else %}
+                                  <li class="page-item disabled">
+                                      <span class="page-link" tabindex="-1">
+                                          <i class="fa fa-angle-left"></i>
+                                          <span class="sr-only">Previous</span>
+                                      </span>
+                                  </li>
+                              {% endif %}
+
+                              {% for num in paginated_subjects.paginator.page_range %}
+                                  {% if num == paginated_subjects.number %}
+                                      <li class="page-item active">
+                                          <span class="page-link">{{ num }}</span>
+                                      </li>
+                                  {% else %}
+                                      <li class="page-item">
+                                          <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                      </li>
+                                  {% endif %}
+                              {% endfor %}
+
+                              {% if paginated_subjects.has_next %}
+                                  <li class="page-item">
+                                      <a class="page-link" href="?page={{ paginated_subjects.next_page_number }}">
+                                          <i class="fa fa-angle-right"></i>
+                                          <span class="sr-only">Next</span>
+                                      </a>
+                                  </li>
+                              {% else %}
+                                  <li class="page-item disabled">
+                                      <span class="page-link">
+                                          <i class="fa fa-angle-right"></i>
+                                          <span class="sr-only">Next</span>
+                                      </span>
+                                  </li>
+                              {% endif %}
+                          </ul>
+                        </nav>
+
+                        
+                    </div>
+                </div>
+              </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="col-md-4">
+
+        <div class="card chart-card">
+          <div class="card-header">
+             <h4 class="card-title">Number of enrolless per year level</h4>
+          </div>
+            <div class="card-body p-3">
+              <div class="chart">
+                <canvas id="pie-chart" class="chart-canvas" height="300px"></canvas>
+              </div>
+            </div>
+          <div class="card-footer mx-auto">
+            <div class="legend ">
+              <i class="fa fa-circle text-info mr-2"></i> 1st year  
+              <i class="fa fa-circle text-primary mr-2"></i> 2nd Year 
+              <i class="fa fa-circle text-success mr-2"></i> 3rd Year 
+              <i class="fa fa-circle text-danger mr-2"></i> 4th Year 
+            </div>
+             <hr>
+          </div>
+      </div>
+
+
+  </div>
+
+
+</div>
+
+
+
+
+<!-- Modal -->
+
+
+<!-- Add subject -->
+<div class="col-md-4">
+    <div class="modal fade" id="modal-add" tabindex="-1" role="dialog" aria-labelledby="modal-add" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-md" role="document">
+        <div class="modal-content">
+          <div class="modal-body p-0">
+            <div class="card card-plain">
+              <div class="card-header pb-0 text-left">
+                <h3 class="font-weight-bolder text-info text-gradient">Add a subject</h3>
+              </div>
+              <div class="card-body">
+                <form role="form text-left" id="addSubjectForm" method="POST">
+                  {% csrf_token %}
+                    <div class="form-group">
+                        <label for="example-text-input" class="form-control-label">Subject name:</label>
+                        <input name="subject_name" class="form-control text-lower" type="text" placeholder="..........." id="example-text-input">
+                    </div>
+                  <div class="form-group">
+                    <label for="exampleFormControlSelect1">Adviser: </label>
+                    <select class="form-control" id="exampleFormControlSelect1" name="adviser">
+                        <option selected="">---------</option>
+                        {% for data in advisers %}
+                            <option value="{{ data.id }}">{{ data }} </option>
+                        {% endfor %}
+                    </select>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="exampleFormControlSelect1">Semester: </label>
+                    <select class="form-control" id="exampleFormControlSelect1" name="semester">
+                        <option selected="">---------</option>
+                        <option value="1st">1st Semester</option>
+                        <option value="2nd">2nd Semester</option>
+                    
+                    </select>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="exampleFormControlSelect1">Year Level: </label>
+                    <select class="form-control" id="exampleFormControlSelect1" name="year_level">
+                        <option selected="">---------</option>
+              
+                            <option value="1st">1st Year</option>
+                            <option value="2nd">2nd Year</option>
+                            <option value="3rd">3rd Year</option>
+                            <option value="4th">4th Year</option>
+                      
+                    </select>
+                  </div>
+
+                  <div class="row">
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="example-number-input" class="form-control-label">Time in grace period: </label>
+                            <input name="time_in_grace_period" class="form-control" type="number" value="15" id="example-number-input">
+                        </div>
+
+                    </div>  
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="example-number-input" class="form-control-label">Time out grace period: </label>
+                            <input name="time_out_grace_period" class="form-control" type="number" value="15" id="example-number-input">
+                        </div>
+
+                    </div>  
+
+
+                  </div>
+
+
+                  <div class="modal-footer">
+                    <button type="submit" class="btn bg-gradient-primary">Save</button>
+                    <button type="button" class="btn btn-link  ml-auto" data-bs-dismiss="modal">Close</button>
+                   </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+
+<!-- Edit subject -->
+<div class="col-md-4">
+  <div class="modal fade" id="modal-edit" tabindex="-1" role="dialog" aria-labelledby="modal-edit" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-md" role="document">
+      <div class="modal-content">
+        <div class="modal-body p-0">
+          <div class="card card-plain">
+            <div class="card-header pb-0 text-left">
+              <h3 class="font-weight-bolder text-info text-gradient">Edit subject</h3>
+            </div>
+            <div class="card-body">
+              <form role="form text-left" method="POST" action="" id="editSubjectForm">
+                    <!-- Hidden input for subject ID -->
+              <input type="hidden" id="subjectId" name="subject_id">
+
+                {% csrf_token %}
+                  <div class="form-group">
+                      <label for="example-text-input" class="form-control-label">Subject name:</label>
+                      <input name="subject_name" class="form-control text-lower" type="text" placeholder="..........." id="id_name" name="subject_name" required>
+                  </div>
+                <div class="form-group">
+                  <label for="exampleFormControlSelect1">Adviser: </label>
+                  <select class="form-control" id="id_adviser" name="adviser" required>
+                      <option selected="">---------</option>
+                      {% for data in advisers %}
+                          <option value="{{ data.id }}">{{ data }} </option>
+                      {% endfor %}
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="exampleFormControlSelect1">Semester: </label>
+                  <select class="form-control" id="id_semester" name="semester">
+                      <option selected="">---------</option>
+                      <option value="1st">1st Semester</option>
+                      <option value="2nd">2nd Semester</option>
+                  
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="exampleFormControlSelect1">Year Level: </label>
+                  <select class="form-control" id="id_year_level" name="year_level">
+                      <option selected="">---------</option>
+            
+                          <option value="1st">1st Year</option>
+                          <option value="2nd">2nd Year</option>
+                          <option value="3rd">3rd Year</option>
+                          <option value="4th">4th Year</option>
+                    
+                  </select>
+                </div>
+
+                <div class="row">
+                  <div class="col">
+                      <div class="form-group">
+                          <label for="example-number-input" class="form-control-label">Time in grace period: </label>
+                          <input name="time_in_grace_period_minutes" class="form-control" type="number" value="15" id="id_time_in_grace_period">
+                      </div>
+
+                  </div>  
+                  <div class="col">
+                      <div class="form-group">
+                          <label for="example-number-input" class="form-control-label">Time out grace period: </label>
+                          <input name="time_out_grace_period_minutes" class="form-control" type="number" value="15" id="id_time_out_grace_period">
+                      </div>
+
+                  </div>  
+
+
+                </div>
+
+
+                <div class="modal-footer">
+                  <button type="submit" class="btn bg-gradient-primary">Save</button>
+                  <button type="button" class="btn btn-link  ml-auto" data-bs-dismiss="modal">Close</button>
+                 </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+{% endblock %}
+
+{% block javascripts %}
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+
+<script>
+  // Add the Ajax script for add_subject
+  $('#addSubjectForm').submit(function (event) {
+      event.preventDefault(); // Prevent the default form submission
+
+      $.ajax({
+          type: 'POST',
+          url: '{% url "add_subject" %}',
+          data: $(this).serialize(),
+          dataType: 'json',
+          success: function (data) {
+              if (data.success) {
+                 $('#modal-add').modal('hide');
+                  // Fetch the updated subject list dynamically
+                  $.get('/path/to/render_subject_list/', function (updatedList) {
+                    // Replace the existing list with the updated one
+                    $('#subjectListContainer').html(updatedList);
+                  });
+
+                  // Show SweetAlert success notification without Okay button
+                  Swal.fire({
+                      icon: 'success',
+                      title: 'Success!',
+                      text: 'Subject added successfully',
+                      showConfirmButton: false,
+                      timer: 1500 // Automatically close after 1.5 seconds
+                  });
+
+                  $('#addSubjectForm')[0].reset();
+                  
+              } else {
+                  // Show SweetAlert error notification without Okay button
+                  Swal.fire({
+                      icon: 'error',
+                      title: 'Error!',
+                      text: data.message,
+                      showConfirmButton: false,
+                      timer: 1500 // Automatically close after 1.5 seconds
+                  });
+              }
+          },
+          error: function (error) {
+              console.error(error);
+
+              // Show SweetAlert error notification without Okay button
+              Swal.fire({
+                  icon: 'error',
+                  title: 'Error!',
+                  text: 'Failed to add subject',
+                  showConfirmButton: false,
+                  timer: 1500 // Automatically close after 1.5 seconds
+              });
+          }
+      });
+  });
+</script>
+
+
+<script>
+ 
+ // var subjectCardToUpdate;  // Variable to store the subject card to update
+
+  // Function to handle the modal show event
+  function handleModalShow(event) {
+    var button = $(event.relatedTarget);  // Button that triggered the modal
+    var modal = $(this);
+
+    // Store the reference to the subject card
+    //subjectCardToUpdate = $('.subject-card[data-subject="' + button.data('subject') + '"]');
+
+    modal.find('#id_name').val(button.data('name'));
+    modal.find('#id_adviser').val(button.data('adviser'));
+    modal.find('#id_time_in').val(button.data('time-in'));
+    modal.find('#id_time_out').val(button.data('time-out'));
+    modal.find('#id_semester').val(button.data('semester'));
+    modal.find('#id_year_level').val(button.data('year-level'));
+
+    var subjectId = button.data('subject');
+    var form = $('#editSubjectForm');
+    var actionUrl = '/subject/edit-subject/' + subjectId + '/';
+    
+    form.attr('action', actionUrl);
+
+    // Add AJAX for form submission
+    form.submit(function (event) {
+      event.preventDefault();
+
+      // Show loading indicator
+      Swal.fire({
+        title: 'Loading...',
+        allowOutsideClick: false,
+        onBeforeOpen: () => {
+          Swal.showLoading();
+        }
+      });
+
+      $.ajax({
+        type: 'POST',
+        url: actionUrl,
+        data: form.serialize(),
+        dataType: 'json',  // Expect JSON data from the server
+        success: function (data) {
+          // Close loading indicator
+          Swal.close();
+
+          // Handle the success response
+          console.log(data);
+
+          // Fetch the updated subject list dynamically
+          $.get('/path/to/render_subject_list/', function (updatedList) {
+            // Replace the existing list with the updated one
+            $('#subjectListContainer').html(updatedList);
+
+
+          });
+
+          // Hide the modal
+          $('#modal-edit').modal('hide');
+
+          // Show SweetAlert success notification without Okay button
+          Swal.fire({
+            icon: 'success',
+            title: 'Success!',
+            text: 'Subject updated successfully',
+            showConfirmButton: false,
+            timer: 1500  // Automatically close after 1.5 seconds
+          });
+        },
+        error: function (error) {
+          // Close loading indicator
+          Swal.close();
+
+          // Handle the error response
+          console.error(error);
+
+          // Show SweetAlert error notification without Okay button
+          Swal.fire({
+            icon: 'error',
+            title: 'Error!',
+            text: 'Failed to update subject',
+            showConfirmButton: false,
+            timer: 1500  // Automatically close after 1.5 seconds
+          });
+        }
+      });
+    });
+  }
+
+  // Attach the handleModalShow function to the modal show event
+  $('#modal-edit').on('show.bs.modal', handleModalShow);
+
+
+</script>
+
+
+<script>
+  function confirmDelete(subjectId) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'You won\'t be able to revert this!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+     
+        $.ajax({
+          type: 'POST',
+          url: '/subject/delete-subject/' + subjectId + '/',
+          data: {
+            csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+          },
+          dataType: 'json',
+          success: function (data) {
+            if (data.success) {
+
+              $.get('/path/to/render_subject_list/', function (updatedList) {
+
+                $('#subjectListContainer').html(updatedList);
+              });
+
+              Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                text: 'Subject deleted successfully',
+                showConfirmButton: false,
+                timer: 1500  
+              });
+            } else {
+             
+              Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: 'Failed to delete subject',
+                showConfirmButton: false,
+                timer: 1500 
+              });
+            }
+          },
+          error: function (error) {
+            
+            console.error(error);
+
+            Swal.fire({
+              icon: 'error',
+              title: 'Error!',
+              text: 'Failed to delete subject',
+              showConfirmButton: false,
+              timer: 1500  
+            });
+          }
+        });
+      }
+    });
+  }
+</script>
+
+
+
+{% endblock %}

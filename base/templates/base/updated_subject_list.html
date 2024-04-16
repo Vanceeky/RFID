@@ -1,0 +1,52 @@
+{% if paginated_subjects %}
+{% for data in paginated_subjects %}
+    <div class="col-xl-12 col-md-6 my-3 subject-card">
+      <div class="card bg-gradient-info h-100">
+        <div class="card-body">
+            <div class="row justify-content-between align-items-center">
+              <div class="col text-white" id="list_year">
+                  {{ data.year_level }} Year
+              </div>
+              <div class="col-auto">
+                  <span class="badge badge-lg badge-success" id="list_semester">{{ data.semester}} Semester</span>
+              </div>
+            </div>
+            <div class="my-3">
+              <div class="h6 text-white cursor-pointer"><a href="{% url 'subject_details' data.name|urlize %}" class="text-white" id="list_subject_name">{{ data.name }} </a></div>
+            </div>
+            <div class="row">
+              <div class="col">
+                  <p class="text-white opacity-8 mb-0 text-sm">Adviser</p>
+                  <div class="d-flex py-1 align-items-center">
+                    <div>
+                        <img src="{{ data.adviser.avatar.url }}" class="avatar avatar-sm me-2" alt="user1">
+                    </div>
+                    <div class="d-flex flex-column justify-content-center ">
+                      <a href="">
+                        <h6 class="d-block h6 text-white">{{ data.adviser.user.last_name }} , {{ data.adviser.user.first_name }}</h6>
+                      </a>
+                    </div>
+                  </div>
+                  {% comment %} <span class="d-block h6 text-white">{{ data.adviser.user.last_name }}, {{ data.adviser.user.first_name }}</span> {% endcomment %}
+              </div>
+              <div class="col ms-auto text-end">
+                  <div class="btn-groups mt-3">
+                    <div class="btn rounded-circle btn-sm btn-danger mb-0 p-1" data-toggle="tooltip" data-placement="top" onclick="confirmDelete('{{ data.id }}')">
+                      <i class="fa fa-trash p-2"></i>
+                  </div>
+                    <div class="btn rounded-circle btn-sm btn-info mb-0 p-1" data-bs-toggle="modal" data-bs-target="#modal-edit" data-subject="{{ data.id }}" data-name="{{ data.name }}" data-adviser="{{ data.adviser.id }}" data-time-in="{{ data.time_in_grace_period_minutes }}" data-time-out="{{ data.time_out_grace_period_minutes }}" data-semester="{{ data.semester }}" data-year-level="{{ data.year_level }}">
+                        <i class="fa fa-edit p-2"></i>
+                    </div>
+
+                  </div>
+              </div>
+            </div>
+        </div>
+      </div>
+    </div>
+
+{% endfor %}
+{% else %}
+
+<p> No subjects found!</p>
+{% endif %}

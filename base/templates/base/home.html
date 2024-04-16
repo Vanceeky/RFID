@@ -1,0 +1,399 @@
+<!--
+=========================================================
+* Argon Dashboard - v1.2.0
+=========================================================
+* Product Page: https://www.creative-tim.com/product/argon-dashboard
+
+* Copyright  Creative Tim (http://www.creative-tim.com)
+* Coded by www.creative-tim.com
+=========================================================
+* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <title>
+    CICS | RFID Attendance Monitoring System | LNU
+  </title>
+
+  <link rel="stylesheet" href="/static/assets/css/sweetalert2.min.css">
+
+  <!-- Specific CSS goes HERE -->
+  <style>
+
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        background-image: url('/static/assets/COLLEGE.jpg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        min-height: 100vh;
+        display: flex;
+        gap: 2em;
+        justify-content: center;
+        align-items: center;
+        font-family: 'Roboto', sans-serif;
+    }
+
+    .clock {
+
+        width: 300px;
+        margin-top: 10em;
+        padding: 2em 3em;
+        background: rgba(255, 255, 255, 0.25);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        color: white;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        justify-content: space-between;
+        align-items: center;
+        gap: 2em;
+        position: relative;
+        padding-bottom: 5em;
+
+    }
+
+    .details{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-direction: column;
+        gap: 2em;
+    }
+
+    .time {
+        font-size: 4em;
+    }
+
+    .date {
+        font-weight: 400;
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+        padding: 1em;
+        text-align: center;
+    }
+
+    .scan_card{
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        align-items: center;
+        margin: 2em;
+        color: white;
+        font-size: 17pt;
+    }
+
+    #rfid_input {
+        width: 50%;
+        margin: 10px;
+        font-size: 25pt;
+        font-weight: bold;
+        padding: 10px;
+        text-align: center;
+        height: 50px;
+    }
+
+    .subject-container{
+        width: 350px;
+        margin-top: 10em;
+        padding: 2em 3em;
+        background: rgba(255, 255, 255, 0.25);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        color: white;
+        display: flex;
+        flex-direction: column;
+        gap: 1em;
+        position: relative;
+    }
+
+    .flex-row{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    @media screen and (min-width: 1000px) {
+        .time {
+            font-size: 6em;
+        }
+    }
+
+    @media screen and (max-width: 500px) {
+        .clock {
+            font-size: 13px;
+        }
+    }
+  </style>
+
+</head>
+
+<body class="bg-default" style="background-image:url('/static/assets/img/COLLEGE.jpg')">
+        
+            <div class="clock">
+                <h1 class="time">8:23</h1>
+                <div class="details">
+                    <h3 class="am_pm">
+                        PM
+                    </h3>
+                    <h3 class="sec">
+                        20
+                    </h3>
+                </div>
+                <h2 class="date">
+                    <span class="month">Mar</span>
+                    <span class="dayOfWeek">Sunday</span>
+                    <span class="day">6</span>
+                </h2>
+            </div>
+
+
+     
+            <div class="scan_card">
+                <h1>Please scan your RFID card:</h1>
+                <input type="text" id="rfid_input" name="rfid_number">
+                {% csrf_token %}
+            </div>
+
+
+       
+            <div class="subject-container">
+
+                {% if current_subjects_info %}
+                <h3>Subject scheduled for the current time: </h3>
+
+                <hr>
+                    {% for subject in current_subjects_info %}
+                        <div class="flex-row">
+                                
+                            <h2>{{ subject.subject_name }}</h2>
+                            <p>Block {{ subject.classification_name.block }} - {{ subject.classification_name.year}} Year</p>
+
+                            
+                        </div>
+                    {% endfor %} 
+                    {% else %}
+                    <p>No subjects scheduled for the current date and time.</p>
+                {% endif %}
+                    
+            </div>
+
+
+
+        </body>
+        </html>
+           
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="/static/assets/js/sweetalert2.all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@12"></script>
+
+
+    <script>
+        function focusOnInput() {
+            var rfidInput = document.getElementById('rfid_input');
+            if (rfidInput) {
+                rfidInput.focus();
+            }
+        }
+
+        focusOnInput();
+    </script>
+
+
+{% comment %} <script>
+    $(document).ready(function() {
+        $('#rfid_input').on('change', function() {
+            var rfid_number = $(this).val();
+    
+            // Check if the input is long enough to be a valid RFID card number
+            if (rfid_number.length >= 10) {
+                // Get the CSRF token
+                var csrf_token = $("input[name=csrfmiddlewaretoken]").val();
+    
+                // Send the RFID number and CSRF token to your view for processing
+                $.ajax({
+                    type: 'POST',
+                    url: '/process_attendance/',  // Update the URL to match your Django URL configuration
+                    data: {
+                        csrfmiddlewaretoken: csrf_token,
+                        rfid_number: rfid_number
+                    },
+                    success: function(response) {
+                        // Clear the input field
+                        $('#rfid_input').val('');
+    
+                        $.get('/path/to/render_attendance_list/', function (updatedList) {
+                            // Replace the existing list with the updated one
+                            $('#AttendanceListContainer').html(updatedList);
+                
+                
+                          });
+                        // Use SweetAlert to display the response message without an OK button
+                        Swal.fire({
+                            icon: response.icon,
+                            //title: 'Success',
+                            text: response.message,
+                            showConfirmButton: false, // Remove the OK button
+                            timer: 2000, // Automatically close the alert after 2 seconds
+                            timerProgressBar: true // Display a progress bar during the timer
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        // Clear the input field
+                        $('#rfid_input').val('');
+
+                        // Log the error details to the console
+                        console.error(xhr.responseText);
+
+                        // Use SweetAlert to display an error message without an OK button
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'An error occurred while processing attendance',
+                            showConfirmButton: false, // Remove the OK button
+                            timer: 2000, // Automatically close the alert after 2 seconds
+                            timerProgressBar: true // Display a progress bar during the timer
+                        });
+                    }
+
+                });
+            }
+        });
+    });
+</script> {% endcomment %}
+
+<script>
+    $(document).ready(function() {
+        $('#rfid_input').on('change', function() {
+            var rfid_number = $(this).val();
+    
+            // Check if the input is long enough to be a valid RFID card number
+            if (rfid_number.length >= 10) {
+                // Get the CSRF token
+                var csrf_token = $("input[name=csrfmiddlewaretoken]").val();
+    
+                // Send the RFID number and CSRF token to your view for processing
+                    $.ajax({
+                        type: 'POST',
+                        url: '/process_attendance/',  // Update the URL to match your Django URL configuration
+                        data: {
+                            csrfmiddlewaretoken: csrf_token,
+                            rfid_number: rfid_number
+                        },
+   
+                        success: function(response) {
+                            // Clear the input field
+                            $('#rfid_input').val('');
+
+                            // Use SweetAlert to display the response message without an OK button
+                            Swal.fire({
+                                icon: response.icon,
+                                text: response.message,
+                                showConfirmButton: false,
+                                timer: 2000,
+                                timerProgressBar: true
+                            });
+
+                           $(document).trigger('attendanceProcessed');
+
+
+                        },
+
+                        error: function(xhr, status, error) {
+                            // Clear the input field
+                            $('#rfid_input').val('');
+        
+                            // Log the error details to the console
+                            console.error(xhr.responseText);
+        
+                            // Use SweetAlert to display an error message without an OK button
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'An error occurred while processing attendance',
+                                showConfirmButton: false, // Remove the OK button
+                                timer: 2000, // Automatically close the alert after 2 seconds
+                                timerProgressBar: true // Display a progress bar during the timer
+                            });
+                        }
+                        
+                    });
+            }
+            
+        });
+
+    
+    });
+    
+</script>
+
+
+
+<script>
+    
+        function updateClock() {
+        const clockElement = document.querySelector('.clock');
+        const timeElement = clockElement.querySelector('.time');
+        const amPmElement = clockElement.querySelector('.am_pm');
+        const secElement = clockElement.querySelector('.sec');
+        const dateElement = clockElement.querySelector('.date');
+
+        const now = new Date();
+        let hours = now.getHours();
+        const minutes = now.getMinutes();
+        const seconds = now.getSeconds();
+        const amPm = hours >= 12 ? 'PM' : 'AM';
+
+        // Convert hours to 12-hour format
+        if (hours > 12) {
+            hours -= 12;
+        } else if (hours === 0) {
+            hours = 12;
+        }
+
+        timeElement.textContent = `${hours}:${minutes.toString().padStart(2, '0')}`;
+        amPmElement.textContent = amPm;
+        secElement.textContent = seconds.toString().padStart(2, '0');
+
+        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        const month = monthNames[now.getMonth()];
+        const dayOfWeek = dayNames[now.getDay()];
+        const day = now.getDate();
+
+        dateElement.innerHTML = `<span class="month"> ${month}, </span><span class="dayOfWeek">${dayOfWeek} </span><span class="day"> ${day} </span>`;
+        }
+
+        // Call the function immediately to initialize the clock
+        updateClock();
+
+        // Update the clock every second
+        setInterval(updateClock, 1000);
+
+    </script>
+
+    
+
+</body>
+
+</html>

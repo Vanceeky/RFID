@@ -1,0 +1,41 @@
+<tr>
+    <th scope="row">
+        <div class="media align-items-center">
+            <a href="#" class="avatar rounded-circle mr-3">
+<!--                 <img alt="Image placeholder" src=""> -->
+            </a>
+            <div class="media-body">
+                <span class="name mb-0 text-sm">{{ at.student.user.username }}</span>
+            </div>
+        </div>
+    </th>
+    <td class="budget">
+        {{ at.student.subject }}
+        <!-- Assuming you want to display the first subject; adjust as needed -->
+    </td>
+    <td class="budget">{{ at.student.student_id }}</td>
+    <td class="budget">
+        {{ at.time_in|date:"g:iA" }}
+        <!-- Format time_in to display as 7:15am -->
+    </td>
+    <td class="budget">
+        {% if at.time_out %} {{ at.time_out|date:"g:iA" }}
+        <!-- Format time_out to display as 8:15am -->
+        {% else %} -
+        <!-- Display a hyphen if time_out is None (pending) -->
+        {% endif %}
+    </td>
+    <td>
+        <span class="badge badge-dot mr-4">
+            <i class="bg-warning"></i>
+            <span class="status">
+                {% if at.time_out %}
+                Checked out
+                {% endif %}
+                {% if not at.time_out %}
+                Pending
+                {% endif %}
+            </span>
+        </span>
+    </td>
+</tr>
